@@ -74,58 +74,82 @@ public class ApiSteps {
     }
 
     @Then("The response should match the sent order details")
-public void validatePostResponse() {
-    // Extract the body from the response
-    String responseBody = response.getBody().asString();
-    
-    // Validate the response body (order details)
-    Assert.assertTrue(responseBody.contains("order_id"));
-    Assert.assertTrue(responseBody.contains("customer"));
-    Assert.assertTrue(responseBody.contains("items"));
-    Assert.assertTrue(responseBody.contains("payment"));
- }
- @Then("The response body should match the sent order details")
- public void validatePostResponsedetails() {
-     String expectedResponseBody = "{\n" +
-         "  \"order_id\": \"12345\",\n" +
-         "  \"customer\": {\n" +
-         "    \"name\": \"Jane Smith\",\n" +
-         "    \"email\": \"janesmith@example.com\",\n" +
-         "    \"phone\": \"1-987-654-3210\",\n" +
-         "    \"address\": {\n" +
-         "      \"street\": \"456 Oak Street\",\n" +
-         "      \"city\": \"Metropolis\",\n" +
-         "      \"state\": \"NY\",\n" +
-         "      \"zipcode\": \"10001\",\n" +
-         "      \"country\": \"USA\"\n" +
-         "    }\n" +
-         "  },\n" +
-         "  \"items\": [\n" +
-         "    {\n" +
-         "      \"product_id\": \"A101\",\n" +
-         "      \"name\": \"Wireless Headphones\",\n" +
-         "      \"quantity\": 1,\n" +
-         "      \"price\": 79.99\n" +
-         "    },\n" +
-         "    {\n" +
-         "      \"product_id\": \"B202\",\n" +
-         "      \"name\": \"Smartphone Case\",\n" +
-         "      \"quantity\": 2,\n" +
-         "      \"price\": 15.99\n" +
-         "    }\n" +
-         "  ],\n" +
-         "  \"payment\": {\n" +
-         "    \"method\": \"credit_card\",\n" +
-         "    \"transaction_id\": \"txn_67890\",\n" +
-         "    \"amount\": 111.97,\n" +
-         "    \"currency\": \"USD\"\n" +
-         "  }\n" +
-         "}";
- 
-     String responseBody = response.getBody().asString();
- 
-     // Validate exact match
-     Assert.assertEquals(responseBody, expectedResponseBody);
- }
+    public void validatePostResponse() {
+        // Extract the body from the response
+        String responseBody = response.getBody().asString();
+
+        // Validate the response body (order details)
+        Assert.assertTrue(responseBody.contains("order_id"));
+        Assert.assertTrue(responseBody.contains("customer"));
+        Assert.assertTrue(responseBody.contains("items"));
+        Assert.assertTrue(responseBody.contains("payment"));
+    }
+
+    @Then("The response body should match the sent order details")
+    public void validatePostResponsedetails() {
+        String expectedResponseBody = "{\n" +
+                "  \"order_id\": \"12345\",\n" +
+                "  \"customer\": {\n" +
+                "    \"name\": \"Jane Smith\",\n" +
+                "    \"email\": \"janesmith@example.com\",\n" +
+                "    \"phone\": \"1-987-654-3210\",\n" +
+                "    \"address\": {\n" +
+                "      \"street\": \"456 Oak Street\",\n" +
+                "      \"city\": \"Metropolis\",\n" +
+                "      \"state\": \"NY\",\n" +
+                "      \"zipcode\": \"10001\",\n" +
+                "      \"country\": \"USA\"\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"items\": [\n" +
+                "    {\n" +
+                "      \"product_id\": \"A101\",\n" +
+                "      \"name\": \"Wireless Headphones\",\n" +
+                "      \"quantity\": 1,\n" +
+                "      \"price\": 79.99\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"product_id\": \"B202\",\n" +
+                "      \"name\": \"Smartphone Case\",\n" +
+                "      \"quantity\": 2,\n" +
+                "      \"price\": 15.99\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"payment\": {\n" +
+                "    \"method\": \"credit_card\",\n" +
+                "    \"transaction_id\": \"txn_67890\",\n" +
+                "    \"amount\": 111.97,\n" +
+                "    \"currency\": \"USD\"\n" +
+                "  }\n" +
+                "}";
+
+        String responseBody = response.getBody().asString();
+
+        // Validate exact match
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.order_id"), "12345");
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.customer.name"), "Jane Smith");
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.customer.email"), "janesmith@example.com");
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.customer.phone"), "1-987-654-3210");
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.customer.address.street"), "456 Oak Street");
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.customer.address.city"), "Metropolis");
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.customer.address.state"), "NY");
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.customer.address.zipcode"), "10001");
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.customer.address.country"), "USA");
+
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.items[0].product_id"), "A101");
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.items[0].name"), "Wireless Headphones");
+        Assert.assertEquals(response.jsonPath().getInt("parsedBody.items[0].quantity"), 1);
+        Assert.assertEquals(response.jsonPath().getFloat("parsedBody.items[0].price"), 79.99, 0.01);
+
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.items[1].product_id"), "B202");
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.items[1].name"), "Smartphone Case");
+        Assert.assertEquals(response.jsonPath().getInt("parsedBody.items[1].quantity"), 2);
+        Assert.assertEquals(response.jsonPath().getFloat("parsedBody.items[1].price"), 15.99, 0.01);
+
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.payment.method"), "credit_card");
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.payment.transaction_id"), "txn_67890");
+        Assert.assertEquals(response.jsonPath().getFloat("parsedBody.payment.amount"), 111.97, 0.01);
+        Assert.assertEquals(response.jsonPath().getString("parsedBody.payment.currency"), "USD");
+    }
 
 }

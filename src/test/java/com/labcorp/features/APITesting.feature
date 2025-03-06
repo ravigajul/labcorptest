@@ -35,3 +35,4 @@ Feature: API Testing with REST Assured and TestNG
       | created_at    | 2024-11-07T12:00:00Z |
     Then The response status code should be 200
     And The response should match the sent order details
+    And The response body should match the sent order details
